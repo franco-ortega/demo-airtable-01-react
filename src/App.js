@@ -1,25 +1,51 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect, useState } from 'react';
+import Map from './maps/Map';
 
-function App() {
+const API_KEY = 'keykQbQpBWtr1spv2';
+const BASE_ID = 'appZTYyVloFGEKjPl';
+
+const App = () => {
+
+  const [maps, setMaps] = useState([]);
+
+  useEffect(() => {
+    //fetch maps
+    fetch(`https://api.airtable.com/v0/${BASE_ID}/maps?api_key=${API_KEY}`)
+      .then(res => res.json())
+      .then(res => {
+
+        Object.keys(res.records).forEach((key) => {
+
+          Object.keys(res.records[key].fields).forEach((field) => {
+            var replacedField = field.trim().replace(/\s+/g, "_");
+            if (field !== replacedField) {
+              res.records[key].fields[replacedField] = res.records[key].fields[field];
+               delete res.records[key].fields[field]
+            }
+          });
+
+       });
+
+        setMaps(res.records);
+      });
+      
+    }, []);
+
+  const mapList = maps.map(map => (
+    <Map
+      key={map.id}
+      {...map.fields}
+    />
+  ));
+
+  if(!maps) return <h1>Loading...</h1>
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <h1>Maps</h1>
+      <ul>{mapList}</ul>
     </div>
   );
-}
+};
 
 export default App;
