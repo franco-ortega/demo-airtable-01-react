@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Map from './maps/Map';
 
-const API_KEY = 'keykQbQpBWtr1spv2';
-const BASE_ID = 'appZTYyVloFGEKjPl';
-
 const App = () => {
 
   const [maps, setMaps] = useState([]);
